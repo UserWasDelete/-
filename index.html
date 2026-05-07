@@ -3,113 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>現代簡約計算機</title>
+    <title>簡易計算機</title>
     <style>
-        :root {
-            --bg-color: #f0f2f5;
-            --calc-bg: #ffffff;
-            --btn-bg: #f8f9fa;
-            --btn-hover: #e9ecef;
-            --accent-color: #4dabf7;
-            --accent-hover: #339af0;
-            --text-color: #495057;
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f9; margin: 0; }
+        .calculator { background: #333; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 320px; }
+        #display { 
+            width: 100%; height: 60px; font-size: 2rem; text-align: right; margin-bottom: 10px; 
+            padding: 10px; box-sizing: border-box; border: none; background: #eee; border-radius: 10px;
         }
-
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: var(--bg-color);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        button { 
+            padding: 20px; font-size: 1.2rem; border: none; border-radius: 10px; cursor: pointer; 
+            background: #555; color: white; transition: 0.2s;
         }
-
-        .calculator {
-            background-color: var(--calc-bg);
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            width: 320px;
-        }
-
-        #display {
-            width: 100%;
-            height: 60px;
-            font-size: 2rem;
-            text-align: right;
-            margin-bottom: 20px;
-            padding: 10px;
-            border: none;
-            background-color: #f1f3f5;
-            border-radius: 10px;
-            color: var(--text-color);
-            box-sizing: border-box;
-        }
-
-        .buttons {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-        }
-
-        button {
-            padding: 20px;
-            font-size: 1.2rem;
-            border: none;
-            border-radius: 12px;
-            background-color: var(--btn-bg);
-            color: var(--text-color);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            outline: none;
-        }
-
-        button:hover {
-            background-color: var(--btn-hover);
-            transform: translateY(-2px);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .operator {
-            color: var(--accent-color);
-            font-weight: bold;
-        }
-
-        .equal {
-            background-color: var(--accent-color);
-            color: white;
-            grid-column: span 2;
-        }
-
-        .equal:hover {
-            background-color: var(--accent-hover);
-        }
-
-        .clear {
-            color: #ff6b6b;
-        }
+        button:active { transform: scale(0.95); }
+        .operator { background: #f39c12; }
+        .clear { background: #e74c3c; grid-column: span 2; }
+        .equal { background: #27ae60; grid-column: span 2; }
     </style>
 </head>
 <body>
 
 <div class="calculator">
-    <input type="text" id="display" disabled value="0">
+    <input type="text" id="display" disabled>
     <div class="buttons">
-        <!-- 第一排 -->
-        <button class="clear" onclick="clearDisplay()">C</button>
+        <button class="clear" onclick="clearDisplay()">清除 (AC)</button>
         <button class="operator" onclick="appendToDisplay('/')">÷</button>
         <button class="operator" onclick="appendToDisplay('*')">×</button>
-        <button class="operator" onclick="deleteLast()">⌫</button>
         
-        <!-- 數字鍵 -->
         <button onclick="appendToDisplay('7')">7</button>
         <button onclick="appendToDisplay('8')">8</button>
         <button onclick="appendToDisplay('9')">9</button>
-        <button class="operator" onclick="appendToDisplay('-')">−</button>
+        <button class="operator" onclick="appendToDisplay('-')">-</button>
         
         <button onclick="appendToDisplay('4')">4</button>
         <button onclick="appendToDisplay('5')">5</button>
@@ -130,47 +55,22 @@
     const display = document.getElementById('display');
 
     function appendToDisplay(input) {
-        if (display.value === "0" || display.value === "Error") {
-            display.value = input;
-        } else {
-            display.value += input;
-        }
+        display.value += input;
     }
 
     function clearDisplay() {
-        display.value = "0";
-    }
-
-    function deleteLast() {
-        if (display.value.length > 1) {
-            display.value = display.value.slice(0, -1);
-        } else {
-            display.value = "0";
-        }
+        display.value = "";
     }
 
     function calculate() {
         try {
-            // 使用 eval 進行簡單計算（僅限此類工具練習，正式專案建議使用更安全的解析方式）
+            // eval 可以處理字串運算，但在正式大型專案需謹慎使用
             display.value = eval(display.value);
         } catch (error) {
-            display.value = "Error";
+            display.value = "錯誤";
+            setTimeout(clearDisplay, 1500);
         }
     }
-
-    // 支援鍵盤輸入
-    document.addEventListener('keydown', (event) => {
-        const key = event.key;
-        if (/[0-9]/.test(key) || ['+', '-', '*', '/', '.'].includes(key)) {
-            appendToDisplay(key);
-        } else if (key === 'Enter') {
-            calculate();
-        } else if (key === 'Escape') {
-            clearDisplay();
-        } else if (key === 'Backspace') {
-            deleteLast();
-        }
-    });
 </script>
 
 </body>
