@@ -2,110 +2,144 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>604 園遊會 - 核銷系統</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>604 園遊會核銷系統</title>
+    <link rel="preload" as="image" href="園遊會傳單604 的複本.jpg">
+    <link rel="preload" as="image" href="園遊會傳單604 的複本 4.jpg">
+    
     <style>
-        /* 基本頁面設定 */
+        :root {
+            --bg-color: #2c3e50;
+            --info-bg: rgba(255, 255, 255, 0.15);
+        }
+
         body {
-            font-family: "Microsoft JhengHei", sans-serif;
-            background-color: #333; /* 暗色背景讓傳單更顯眼 */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
             display: flex;
             flex-direction: column;
             align-items: center;
             margin: 0;
-            padding: 20px 0;
+            padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent; /* 移除手機點擊藍色框 */
         }
 
-        /* 傳單容器 */
         .flyer-container {
-            width: 95%;
-            max-width: 400px;
-            background: white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            font-size: 0; /* 消除圖片間的 HTML 空隙 */
+            width: 92%;
+            max-width: 420px;
+            margin-top: 20px;
+            background: #fff;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            border-radius: 4px;
+            overflow: hidden;
+            line-height: 0; /* 徹底消除圖片間隙 */
         }
 
-        /* 圖片通用設定 */
-        img {
+        /* 主圖優化 */
+        .main-flyer {
             width: 100%;
+            height: auto;
             display: block;
-            border: none;
         }
 
-        /* 優惠券區域 */
+        /* 優惠券區塊 */
         .coupon-row {
             display: flex;
             width: 100%;
+            background-color: #fff;
         }
 
         .coupon-item {
             flex: 1;
             position: relative;
             cursor: pointer;
-            overflow: hidden;
+            transition: transform 0.1s active; /* 點擊縮放效果 */
         }
 
-        /* 已使用圖片：預設完全透明 */
-        .used-img {
+        .coupon-item:active {
+            transform: scale(0.98);
+        }
+
+        .coupon-item img {
+            width: 100%;
+            display: block;
+        }
+
+        /* 已使用圖層優化 */
+        .used-overlay {
             position: absolute;
             top: 0;
             left: 0;
+            width: 100%;
+            height: 100%;
             opacity: 0;
-            transition: opacity 0.4s ease;
-            pointer-events: none;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s;
+            z-index: 2;
         }
 
-        /* 被點擊後的狀態 */
-        .coupon-item.is-used .used-img {
+        /* 啟動狀態 */
+        .coupon-item.is-used .used-overlay {
             opacity: 1;
+            visibility: visible;
         }
 
-        /* 底部提示文字 */
-        .info {
-            color: #fff;
-            background: rgba(255,255,255,0.1);
-            padding: 10px 20px;
-            border-radius: 50px;
-            margin-top: 20px;
+        /* 底部資訊欄 */
+        .footer-info {
+            margin: 25px 0;
+            padding: 12px 25px;
+            background: var(--info-bg);
+            color: white;
+            border-radius: 30px;
             font-size: 14px;
-            letter-spacing: 1px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* 防止長按圖片跳出選單 (選配，方便核銷) */
+        img {
+            pointer-events: none;
+            -webkit-user-drag: none;
         }
     </style>
 </head>
 <body>
 
     <div class="flyer-container">
-        <img src="園遊會傳單604 的複本 6.jpg" alt="主傳單">
+        <img src="園遊會傳單604 的複本 6.jpg" class="main-flyer" loading="eager" alt="604園遊會">
 
         <div class="coupon-row">
-            <div class="coupon-item" onclick="redeem(this)">
-                <img src="園遊會傳單604 的複本 3.png" alt="折價券1">
-                <img src="園遊會傳單604 的複本.jpg" class="used-img" alt="已使用1">
+            <div class="coupon-item" onclick="handleRedeem(this)">
+                <img src="園遊會傳單604 的複本 3.png" alt="券1">
+                <img src="園遊會傳單604 的複本.jpg" class="used-overlay" alt="已使用1">
             </div>
 
-            <div class="coupon-item" onclick="redeem(this)">
-                <img src="園遊會傳單604 的複本 2.png" alt="折價券2">
-                <img src="園遊會傳單604 的複本 4.jpg" class="used-img" alt="已使用2">
+            <div class="coupon-item" onclick="handleRedeem(this)">
+                <img src="園遊會傳單604 的複本 2.png" alt="券2">
+                <img src="園遊會傳單604 的複本 4.jpg" class="used-overlay" alt="已使用2">
             </div>
         </div>
     </div>
 
-    <div class="info">請點擊下方 5 元折價券進行核銷</div>
+    <div class="footer-info">🎟 點擊下方 5 元優惠券進行核銷</div>
 
     <script>
-        function redeem(element) {
-            // 加入已使用的標籤
-            if (!element.classList.contains('is-used')) {
-                element.classList.add('is-used');
-                
-                // 觸發手機震動（若設備支援）
-                if (navigator.vibrate) {
-                    navigator.vibrate(100);
-                }
-                console.log("折價券已成功核銷！");
+        function handleRedeem(el) {
+            if (el.classList.contains('is-used')) return;
+
+            // 1. 立即加入 class 顯示已使用圖片
+            el.classList.add('is-used');
+
+            // 2. 觸發觸覺回饋 (Haptic Feedback)
+            if ("vibrate" in navigator) {
+                navigator.vibrate([60]); 
             }
+
+            // 3. 可以在這裡加入簡單的音效 (選配)
+            // let audio = new Audio('success.mp3');
+            // audio.play();
         }
     </script>
-
 </body>
 </html>
