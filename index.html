@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>園遊會傳單</title>
+    <style>
+        :root {
+            --bg-color-1: #ff9a9e;
+            --bg-color-2: #fad0c4;
+            --accent-color: #ffecd2;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100svh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 美化背景：使用溫暖的漸層色 */
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            background-attachment: fixed;
+            overflow: hidden;
+            font-family: "Microsoft JhengHei", sans-serif;
+        }
+
+        /* 裝飾用的背景圓圈，增加層次感 */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: 0;
+        }
+
+        #flyer-wrapper {
+            position: relative;
+            aspect-ratio: 3969 / 5613;
+            max-width: 95vw; /* 稍微縮小一點點，露出背景 */
+            max-height: 95vh;
+            max-height: 95svh;
+            display: flex;
+            z-index: 1;
+            /* 美化傳單：加入立體陰影與圓角 */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border-radius: 8px;
+            overflow: hidden; /* 確保內容不會超出圓角 */
+            background-color: white;
+        }
+
+        #flyer-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .coupon {
+            position: absolute;
+            width: 50%;
+            height: 19.374%;
+            bottom: 0;
+            z-index: 1000;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            transition: filter 0.3s, transform 0.2s;
+        }
+
+        /* 鼠標懸停時的微亮效果 */
+        .coupon:hover {
+            filter: brightness(1.1);
+        }
+
+        #yellow-coupon {
+            left: 0;
+        }
+
+        #orange-coupon {
+            left: 50%;
+        }
+
+        .coupon:active {
+            transform: scale(0.96);
+        }
+
+        /* 使用後加入一點變暗的效果 */
+        .coupon.used {
+            filter: grayscale(0.2) brightness(0.9);
+            cursor: default;
+        }
+    </style>
+</head>
+<body>
+    <div id="flyer-wrapper">
+        <img src="園遊會傳單604結構.png" alt="園遊會傳單" id="flyer-image">
+        <img src="黃折價券.png" alt="黃折價券" class="coupon" id="yellow-coupon" onclick="useCoupon(this, '黃折價券已使用.png', '黃色')">
+        <img src="橘折價券.png" alt="橘折價券" class="coupon" id="orange-coupon" onclick="useCoupon(this, '橘折價券已使用.png', '橘色')">
+    </div>
+
+    <script>
+        function useCoupon(element, usedImageSrc, couponName) {
+            const confirmUse = confirm(`確定要使用這張${couponName}折價券嗎？\n使用後將無法恢復。`);
+
+            if (confirmUse) {
+                element.src = usedImageSrc;
+                element.onclick = null;
+                element.classList.add('used');
+            }
+        }
+    </script>
+</body>
+</html>
