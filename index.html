@@ -20,25 +20,27 @@
 
         #flyer-wrapper {
             position: relative;
-            /* 關鍵：使用 inline-grid 確保容器寬度完全由圖片寬度決定 */
-            display: inline-grid;
-            line-height: 0;
-        }
-
-        #flyer-image {
-            display: block;
+            /* 根據您提供的 3969*5613 設定精確寬高比 */
+            aspect-ratio: 3969 / 5613;
             max-width: 100vw;
             max-height: 100vh;
             max-height: 100svh;
-            width: auto;
-            height: auto;
+            display: flex;
+        }
+
+        #flyer-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
         }
 
         .coupon {
             position: absolute;
             width: 50%;
+            /* 根據比例計算的高度：28.77 / 148.5 = 19.374% */
             height: 19.374%;
-            top: 80.626%;
+            bottom: 0; /* 直接對齊容器最底部 */
             z-index: 1000;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
