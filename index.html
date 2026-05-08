@@ -3,99 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>604 園遊會互動傳單</title>
+    <title>604 園遊會 - 核銷系統</title>
     <style>
+        /* 基本頁面設定 */
         body {
             font-family: "Microsoft JhengHei", sans-serif;
-            background-color: #e0e0e0;
+            background-color: #333; /* 暗色背景讓傳單更顯眼 */
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
             margin: 0;
+            padding: 20px 0;
         }
-        .container {
-            width: 100%;
-            max-width: 450px;
+
+        /* 傳單容器 */
+        .flyer-container {
+            width: 95%;
+            max-width: 400px;
             background: white;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-size: 0; /* 消除圖片間的 HTML 空隙 */
         }
-        /* 傳單上半部 */
-        .main-flyer {
+
+        /* 圖片通用設定 */
+        img {
             width: 100%;
             display: block;
+            border: none;
         }
+
         /* 優惠券區域 */
-        .coupon-section {
+        .coupon-row {
             display: flex;
             width: 100%;
-            cursor: pointer;
         }
-        .coupon-box {
+
+        .coupon-item {
             flex: 1;
             position: relative;
+            cursor: pointer;
             overflow: hidden;
         }
-        .coupon-box img {
-            width: 100%;
-            display: block;
-        }
-        /* 「已使用」圖片預設隱藏，疊在原本圖片上 */
-        .used-overlay {
+
+        /* 已使用圖片：預設完全透明 */
+        .used-img {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
             opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none; /* 避免擋住點擊事件 */
+            transition: opacity 0.4s ease;
+            pointer-events: none;
         }
-        /* 當 active 狀態時顯示已使用圖片 */
-        .coupon-box.active .used-overlay {
+
+        /* 被點擊後的狀態 */
+        .coupon-item.is-used .used-img {
             opacity: 1;
         }
-        .hint {
-            margin-top: 15px;
-            color: #555;
-            font-weight: bold;
-            background: #fff;
-            padding: 5px 15px;
-            border-radius: 20px;
+
+        /* 底部提示文字 */
+        .info {
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 50px;
+            margin-top: 20px;
+            font-size: 14px;
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <img src="園遊會傳單604 的複本 6.jpg" class="main-flyer">
+    <div class="flyer-container">
+        <img src="園遊會傳單604 的複本 6.jpg" alt="主傳單">
 
-        <div class="coupon-section">
-            <div class="coupon-box" onclick="markUsed(this)">
+        <div class="coupon-row">
+            <div class="coupon-item" onclick="redeem(this)">
                 <img src="園遊會傳單604 的複本 3.png" alt="折價券1">
-                <img src="園遊會傳單604 的複本.jpg" class="used-overlay" alt="已使用1">
+                <img src="園遊會傳單604 的複本.jpg" class="used-img" alt="已使用1">
             </div>
 
-            <div class="coupon-box" onclick="markUsed(this)">
+            <div class="coupon-item" onclick="redeem(this)">
                 <img src="園遊會傳單604 的複本 2.png" alt="折價券2">
-                <img src="園遊會傳單604 的複本 4.jpg" class="used-overlay" alt="已使用2">
+                <img src="園遊會傳單604 的複本 4.jpg" class="used-img" alt="已使用2">
             </div>
         </div>
     </div>
 
-    <div class="hint">💡 提示：點擊下方折價券即可核銷</div>
+    <div class="info">請點擊下方 5 元折價券進行核銷</div>
 
     <script>
-        function markUsed(element) {
-            // 加入 active 類別來顯示「已使用」圖片
-            element.classList.add('active');
-            
-            // 可選：加入簡單的震動效果（僅支援部分安卓手機）
-            if (navigator.vibrate) {
-                navigator.vibrate(50);
+        function redeem(element) {
+            // 加入已使用的標籤
+            if (!element.classList.contains('is-used')) {
+                element.classList.add('is-used');
+                
+                // 觸發手機震動（若設備支援）
+                if (navigator.vibrate) {
+                    navigator.vibrate(100);
+                }
+                console.log("折價券已成功核銷！");
             }
         }
     </script>
+
 </body>
 </html>
