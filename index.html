@@ -3,143 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>604 園遊會核銷系統</title>
+    <title>604 園遊會快核</title>
+    
     <link rel="preload" as="image" href="園遊會傳單604 的複本.jpg">
     <link rel="preload" as="image" href="園遊會傳單604 的複本 4.jpg">
     
     <style>
-        :root {
-            --bg-color: #2c3e50;
-            --info-bg: rgba(255, 255, 255, 0.15);
-        }
-
+        /* 針對手機顯示優化 */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--bg-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background-color: #1a1a1a;
             margin: 0;
-            padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
-            -webkit-tap-highlight-color: transparent; /* 移除手機點擊藍色框 */
+            overflow-x: hidden;
+            -webkit-user-select: none; /* 防止手機長按選取文字 */
         }
 
-        .flyer-container {
-            width: 92%;
-            max-width: 420px;
-            margin-top: 20px;
+        .flyer-app {
+            width: 100vw; /* 滿寬 */
+            max-width: 480px;
+            position: relative;
             background: #fff;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            border-radius: 4px;
-            overflow: hidden;
-            line-height: 0; /* 徹底消除圖片間隙 */
+            line-height: 0;
         }
 
-        /* 主圖優化 */
-        .main-flyer {
+        /* 降低圖片解析度感知：稍微增加一點對比度，讓低畫質看起來比較清晰 */
+        img {
             width: 100%;
             height: auto;
             display: block;
+            border: none;
+            /* 效能優化：告訴瀏覽器這張圖不打算改變大小 */
+            will-change: opacity;
+            image-rendering: -webkit-optimize-contrast; /* 手機端渲染優化 */
         }
 
-        /* 優惠券區塊 */
-        .coupon-row {
+        /* 優惠券區塊：改用 Flex 佈局 */
+        .coupon-group {
             display: flex;
             width: 100%;
-            background-color: #fff;
+            background: #fff;
         }
 
-        .coupon-item {
+        .coupon-btn {
             flex: 1;
             position: relative;
-            cursor: pointer;
-            transition: transform 0.1s active; /* 點擊縮放效果 */
+            touch-action: manipulation; /* 優化手機點擊延遲 */
         }
 
-        .coupon-item:active {
-            transform: scale(0.98);
-        }
-
-        .coupon-item img {
-            width: 100%;
-            display: block;
-        }
-
-        /* 已使用圖層優化 */
-        .used-overlay {
+        /* 已使用圖層：預設不渲染 */
+        .used-stamp {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s;
-            z-index: 2;
-        }
-
-        /* 啟動狀態 */
-        .coupon-item.is-used .used-overlay {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* 底部資訊欄 */
-        .footer-info {
-            margin: 25px 0;
-            padding: 12px 25px;
-            background: var(--info-bg);
-            color: white;
-            border-radius: 30px;
-            font-size: 14px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        /* 防止長按圖片跳出選單 (選配，方便核銷) */
-        img {
+            transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: none;
-            -webkit-user-drag: none;
+        }
+
+        /* 點擊後的視覺回饋 */
+        .coupon-btn.active .used-stamp {
+            opacity: 1;
+        }
+
+        /* 針對「只有手機用」的按鈕優化 */
+        .coupon-btn:active {
+            filter: brightness(0.9);
+        }
+
+        /* 狀態列提示 */
+        .status-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(50%);
+            width: 80%;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            text-align: center;
+            padding: 8px 0;
+            border-radius: 20px;
+            font-size: 13px;
+            pointer-events: none;
+            z-index: 100;
         }
     </style>
 </head>
 <body>
 
-    <div class="flyer-container">
-        <img src="園遊會傳單604 的複本 6.jpg" class="main-flyer" loading="eager" alt="604園遊會">
+    <div class="flyer-app">
+        <img src="園遊會傳單604 的複本 6.jpg" loading="eager">
 
-        <div class="coupon-row">
-            <div class="coupon-item" onclick="handleRedeem(this)">
-                <img src="園遊會傳單604 的複本 3.png" alt="券1">
-                <img src="園遊會傳單604 的複本.jpg" class="used-overlay" alt="已使用1">
+        <div class="coupon-group">
+            <div class="coupon-btn" onclick="redeem(this)">
+                <img src="園遊會傳單604 的複本 3.png">
+                <img src="園遊會傳單604 的複本.jpg" class="used-stamp">
             </div>
 
-            <div class="coupon-item" onclick="handleRedeem(this)">
-                <img src="園遊會傳單604 的複本 2.png" alt="券2">
-                <img src="園遊會傳單604 的複本 4.jpg" class="used-overlay" alt="已使用2">
+            <div class="coupon-btn" onclick="redeem(this)">
+                <img src="園遊會傳單604 的複本 2.png">
+                <img src="園遊會傳單604 的複本 4.jpg" class="used-stamp">
             </div>
         </div>
     </div>
 
-    <div class="footer-info">🎟 點擊下方 5 元優惠券進行核銷</div>
-
     <script>
-        function handleRedeem(el) {
-            if (el.classList.contains('is-used')) return;
+        function redeem(el) {
+            if (el.classList.contains('active')) return;
 
-            // 1. 立即加入 class 顯示已使用圖片
-            el.classList.add('is-used');
+            // 執行核銷
+            el.classList.add('active');
 
-            // 2. 觸發觸覺回饋 (Haptic Feedback)
-            if ("vibrate" in navigator) {
-                navigator.vibrate([60]); 
+            // 手機震動反饋
+            if (window.navigator && window.navigator.vibrate) {
+                window.navigator.vibrate(40);
             }
-
-            // 3. 可以在這裡加入簡單的音效 (選配)
-            // let audio = new Audio('success.mp3');
-            // audio.play();
         }
+
+        // 禁止手機雙擊縮放導致的延遲
+        document.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
     </script>
 </body>
 </html>
